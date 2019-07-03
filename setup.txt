@@ -1,0 +1,9 @@
+Install python 3.7
+Install pip(3)
+Run pip install -r requirements.txt
+Run python
+Enter import nltk
+Enter nltk.download()
+Select popular
+
+Run 'python imdb_sentiment.py' to begin training the algorithim

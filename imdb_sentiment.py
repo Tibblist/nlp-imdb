@@ -104,33 +104,30 @@ def prepText(reviewText):
 if __name__ == '__main__':
     with Pool(12) as p:
         X_train = p.map(prepText, X_train)
-
-if __name__ == '__main__':
     with Pool(12) as p:
         X_test = p.map(prepText, X_test)
+    print(X_train[10:])
 
-print(X_train[10:])
+    print("Vectorizing")
 
-print("Vectorizing")
+    vectorizer = TfidfVectorizer()
+    train_vectors = vectorizer.fit_transform(X_train)
+    test_vectors = vectorizer.transform(X_test)
+    print(train_vectors.shape, test_vectors.shape)
 
-vectorizer = TfidfVectorizer()
-train_vectors = vectorizer.fit_transform(X_train)
-test_vectors = vectorizer.transform(X_test)
-print(train_vectors.shape, test_vectors.shape)
+    clf = SGDClassifier(loss='hinge', penalty='l2', alpha=1e-3, random_state=42, max_iter=200, tol=None).fit(train_vectors, y_train)
 
-clf = SGDClassifier(loss='hinge', penalty='l2', alpha=1e-3, random_state=42, max_iter=200, tol=None).fit(train_vectors, y_train)
-
-predicted = clf.predict(test_vectors)
-#print(accuracy_score(y_test,predicted))
-print(metrics.classification_report(y_test, predicted))
-while True:
-    userReview = prepList([input("Enter review here: ")])
-    userVector = vectorizer.transform(userReview)
-    predicted = clf.predict(userVector)
-    if predicted[0] == 1:
-        print("This was a positive review!")
-    if predicted[0] == 0:
-        print("This was a negative review!")
-    shouldContinue = input("Submit another review? (Y/N)")
-    if shouldContinue == "N":
-        break
+    predicted = clf.predict(test_vectors)
+    #print(accuracy_score(y_test,predicted))
+    print(metrics.classification_report(y_test, predicted))
+    while True:
+        userReview = prepText([input("Enter review here: ")])
+        userVector = vectorizer.transform(userReview)
+        predicted = clf.predict(userVector)
+        if predicted[0] == 1:
+            print("This was a positive review!")
+        if predicted[0] == 0:
+            print("This was a negative review!")
+        shouldContinue = input("Submit another review? (Y/N)")
+        if shouldContinue == "N":
+            break
