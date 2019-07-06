@@ -117,3 +117,4 @@ dmypy.json
 *.tar.gz
 /aclImdb
 *.pickle
+/20news-18828
